@@ -1,0 +1,2 @@
+# Essentials provides PySide6 QtCore, QtGui and QtWidgets without the larger Qt add-on modules.
+PySide6-Essentials>=6.8,<7

@@ -1,0 +1,20 @@
+SQL SERVER SIMULATOR - INITIAL PREVIEW 0.6.1
+
+Designed and developed by: Ali Sayyadi
+
+This is an initial educational preview that may contain bugs.
+If you encounter a problem, use Help > Report a bug via Gmail in the application.
+
+Bug report email:
+Ali.sayyadi200@gmail.com
+
+The software provides a SQL Server Management Studio-inspired interface but uses
+SQLite as its database engine. It is NOT Microsoft SQL Server and does not
+implement the full T-SQL language. It is not affiliated with Microsoft.
+
+This application uses Qt / PySide6 components under their respective licenses.
+See LICENSE_NOTICES.txt for additional information.
+
+شبیه‌ساز SQL Server
+طراحی و ساخت: علی صیادی
+نسخه اولیه است و ممکن است دارای خطا باشد.

@@ -1,0 +1,65 @@
+name: Build SQL Server Simulator for Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'requirements.txt'
+      - 'build_windows.bat'
+      - 'installer.iss'
+      - 'assets/**'
+      - '.github/workflows/windows-build.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  windows-installer:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt "pyinstaller>=6.8,<8"
+      - name: Run application regression tests
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Build Qt desktop application
+        shell: cmd
+        run: >
+          python -m PyInstaller --noconfirm --clean --windowed --onedir
+          --name SQLServerSimulator --exclude-module tkinter
+          --icon "%CD%\assets\app.ico" --add-data "%CD%\assets;assets"
+          --distpath dist --workpath build --specpath build src\main.py
+      - name: Install Inno Setup if unavailable
+        shell: pwsh
+        run: |
+          $known = @("${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "${env:ProgramFiles}\Inno Setup 6\ISCC.exe")
+          if (-not ($known | Where-Object { Test-Path $_ })) {
+            choco install innosetup --yes --no-progress
+          }
+      - name: Build Setup installer
+        shell: pwsh
+        run: |
+          $known = @("${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "${env:ProgramFiles}\Inno Setup 6\ISCC.exe")
+          $iscc = $known | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) { throw "Inno Setup compiler not found" }
+          & $iscc installer.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v4
+        with:
+          name: SQL-Server-Simulator-v0.6.1-Windows
+          path: |
+            installer_out/*.exe
+            dist/SQLServerSimulator/**
+          if-no-files-found: error

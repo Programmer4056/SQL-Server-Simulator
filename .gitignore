@@ -1,0 +1,40 @@
+# Python virtual environments and build artifacts
+.venv/
+venv/
+.env/
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Windows application outputs
+build/
+dist/
+installer_out/
+*.spec
+*.exe
+
+# Local database files (retain the intentional learning examples)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+!examples/*.db
+
+# User configuration, logs and temp files
+*.log
+*.tmp
+*.bak
+.env
+.env.*
+!.env.example
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Archives generated for distribution
+*.zip

@@ -1,0 +1,10 @@
+Third-party software and brand notice
+--------------------------------------
+- Qt for Python (PySide6) is available under LGPLv3/GPLv3 or commercial licensing.
+  Review license obligations at https://www.qt.io/licensing/ and include applicable
+  Qt libraries, licenses and notices when distributing executable builds.
+- PyInstaller has its own license. See https://pyinstaller.org/en/stable/license.html.
+- SQLite is public domain: https://www.sqlite.org/copyright.html.
+- "SQL Server" and "Microsoft" are trademarks of Microsoft Corporation.
+  SQL Server Simulator is an independent educational project, not an official
+  Microsoft product. No Microsoft artwork is bundled.
