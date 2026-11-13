@@ -1,87 +1,144 @@
-# شبیه‌ساز آموزشی SQL Server | SQL Server Simulator
+<h1 dir="rtl" align="right">شبیه‌ساز آموزشی SQL Server</h1>
 
-**نسخه:** `0.6.1` (آزمایشی)  
-**طراحی و توسعه:** علی صیادی  
-**گزارش خطا:** [Ali.sayyadi200@gmail.com](mailto:Ali.sayyadi200@gmail.com)  
-**زبان برنامه:** انگلیسی و فارسی | **سیستم‌عامل:** ویندوز ۱۰ و ۱۱
+<p dir="rtl" align="right">
+<strong>SQL Server Simulator | نسخه ۰.۶.۱ (آزمایشی)</strong><br>
+<strong>طراحی و توسعه:</strong> علی صیادی<br>
+<strong>سیستم‌عامل:</strong> ویندوز ۱۰ و ۱۱<br>
+<strong>رابط کاربری:</strong> انگلیسی و فارسی، با تم روشن و تاریک
+</p>
 
-[English README](README_EN.md) | [راهنمای کامل فارسی](README_FA.md) | [تغییرات نسخه 0.6.1](CHANGES_v0_6_1.md)
+<p dir="rtl" align="right">
+<a href="README_FA.md">📘 راهنمای کامل فارسی</a> |
+<a href="README_EN.md">English documentation</a> |
+<a href="CHANGES_v0_6_1.md">تغییرات نسخه ۰.۶.۱</a>
+</p>
 
-## معرفی پروژه
+<hr>
 
-**SQL Server Simulator** یک نرم‌افزار آموزشی دسکتاپ برای یادگیری طراحی پایگاه داده رابطه‌ای است. محیط آن با الهام از **SQL Server Management Studio (SSMS)** طراحی شده تا دانشجویان بتوانند بدون نیاز به نصب SQL Server، پایگاه داده و جدول بسازند، کلید اصلی و خارجی تعریف کنند، روابط را در **Database Diagram** ترسیم کنند و صحت ارتباطات را در عمل بررسی کنند.
+<h2 dir="rtl" align="right">🎓 معرفی پروژه</h2>
 
-> **توجه:** این پروژه مستقل از مایکروسافت است و از موتور **SQLite** استفاده می‌کند؛ بنابراین خود Microsoft SQL Server یا SSMS نیست و همه امکانات T-SQL و SQL Server را پوشش نمی‌دهد. این نسخه هنوز آزمایشی است و ممکن است خطا داشته باشد. پیش از تغییر ساختار جداول مهم، از فایل‌های پایگاه داده نسخه پشتیبان تهیه کنید.
+<p dir="rtl" align="right">
+<strong>SQL Server Simulator</strong> یک نرم‌افزار دسکتاپ آموزشی برای یادگیری طراحی و مدیریت پایگاه داده‌های رابطه‌ای است. محیط برنامه با الهام از <strong>SQL Server Management Studio (SSMS)</strong> طراحی شده است تا دانشجویان بتوانند بدون نصب موتور SQL Server، به‌صورت گرافیکی پایگاه داده بسازند، جدول‌ها را ویرایش کنند، رابطه‌ها را در <code>Database Diagram</code> ترسیم کنند و قواعد کلید اصلی و خارجی را در عمل بیاموزند.
+</p>
 
-## قابلیت‌ها
+<p dir="rtl" align="right">
+<strong>مهم:</strong> این برنامه محصول مایکروسافت یا جایگزین کامل SQL Server نیست. موتور واقعی آن <strong>SQLite</strong> است و بخشی از امکانات SQL Server را برای اهداف آموزشی شبیه‌سازی می‌کند. بنابراین اجرای تمام دستورات <code>T-SQL</code> و سازگاری کامل با SSMS تضمین نمی‌شود.
+</p>
 
-- **ساخت پایگاه داده و جدول بدون کدنویسی:** استفاده از Wizard و Table Designer برای ایجاد و ویرایش ساختار جدول‌ها.
-- **تعریف انواع داده:** انتخاب انواع آشنا مانند `INT`، `NVARCHAR(50)` و `DECIMAL(18,2)` در رابط طراحی.
-- **کلید اصلی و خارجی:** تعریف `PRIMARY KEY` و `FOREIGN KEY` و بررسی قوانین جامعیت ارجاعی.
-- **روابط پایگاه داده:** پشتیبانی آموزشی از ارتباط‌های **یک‌به‌یک (1:1)**، **یک‌به‌چند (1:N)**، **چندبه‌چند (N:M)** با جدول واسط و **رابطه بازگشتی**.
-- **نمودار تعاملی Database Diagram:** ساخت و ویرایش جدول در نمودار، اتصال فیلد به فیلد با ماوس یا حالت `Draw Link (2 clicks)`، انتخاب و حذف رابطه با تأیید، و باز و بسته‌کردن نمایش جدول‌ها.
-- **حفظ داده‌ها هنگام تغییر ساختار:** بررسی محدودیت‌ها پیش از اعمال تغییر و جلوگیری از تغییراتی که داده‌ها یا روابط موجود را نامعتبر می‌کنند؛ برخی تغییرات پیچیده ساختار عمداً محدود شده‌اند.
-- **تنظیم Identity:** تعریف مقدار شروع (`Seed`) و گام افزایش (`Increment`) و تولید شناسه توسط موتور پایگاه داده در سناریوهای پشتیبانی‌شده.
-- **ورود و مشاهده اطلاعات:** فرم درج رکورد، نمای جدولی، ویرایشگر دستورات SQL و مشاهده نتایج.
-- **خروجی اسکریپت:** تولید فایل `.sql` شامل ساختار، داده‌ها یا هر دو برای نسخه مقصد انتخاب‌شده SQL Server؛ **این خروجی بکاپ باینری `.bak` نیست** و سازگاری آن با تمام نسخه‌های مقصد تأیید نشده است.
-- **تنظیمات ظاهری:** تم روشن/تاریک و رابط انگلیسی/فارسی.
+<h2 dir="rtl" align="right">✨ قابلیت‌های اصلی</h2>
 
-## فناوری‌های مورد استفاده
+<ul dir="rtl">
+<li><strong>ساخت بدون کدنویسی:</strong> ایجاد پایگاه داده و جدول با <code>Wizard</code> و <code>Table Designer</code>.</li>
+<li><strong>طراحی ستون‌ها:</strong> تعریف نام، نوع داده، طول، مقدارپذیری تهی (<code>NULL</code>)، کلید اصلی و کلید خارجی.</li>
+<li><strong>نوع داده‌های آشنا:</strong> گزینه‌هایی مانند <code>INT</code>، <code>NVARCHAR(50)</code>، <code>NVARCHAR(MAX)</code> و <code>DECIMAL(18,2)</code>.</li>
+<li><strong>شناسه خودکار:</strong> تنظیم <code>IDENTITY</code> با مقادیر <code>Seed</code> و <code>Increment</code> در امکانات پشتیبانی‌شده.</li>
+<li><strong>نمودار تعاملی:</strong> ساخت و ویرایش جدول‌ها، جابه‌جایی کارت‌ها و اتصال مستقیم فیلدها در <code>Database Diagram</code>.</li>
+<li><strong>مدیریت رابطه‌ها:</strong> انتخاب خط ارتباط، مشاهده مشخصات و حذف رابطه با تأیید کاربر.</li>
+<li><strong>ورود و مشاهده داده‌ها:</strong> فرم ورود رکورد، نمایش جدولی اطلاعات و ویرایشگر دستورهای SQL.</li>
+<li><strong>خروجی اسکریپت:</strong> تولید فایل <code>.sql</code> برای ساختار جدول‌ها، داده‌ها یا هر دو.</li>
+<li><strong>امکانات ظاهری:</strong> انتخاب زبان انگلیسی یا فارسی و تم روشن یا تاریک.</li>
+</ul>
 
-| بخش | فناوری |
-|---|---|
-| زبان برنامه‌نویسی | Python |
-| رابط کاربری دسکتاپ | PySide6 / Qt 6 |
-| موتور پایگاه داده آموزشی | SQLite 3 |
-| ترسیم نمودار و تعامل با ماوس | Qt Graphics View Framework |
-| تولید نسخه ویندوزی | PyInstaller |
-| ساخت نصب‌کننده | Inno Setup 6 |
-| آزمون | Python `unittest` |
+<h2 dir="rtl" align="right">🔗 انواع روابط و قواعد پایگاه داده</h2>
 
-## اجرا روی ویندوز
+<table dir="rtl">
+<thead>
+<tr><th>نوع رابطه</th><th>نحوه پیاده‌سازی آموزشی</th></tr>
+</thead>
+<tbody>
+<tr><td>یک‌به‌یک (۱:۱)</td><td>کلید اصلی مشترک: کلید جدول فرزند، هم‌زمان <code>PK</code> و <code>FK</code> است.</td></tr>
+<tr><td>یک‌به‌چند (۱:N)</td><td>کلید سمت «یک» در جدول سمت «چند» به‌عنوان <code>FK</code> ثبت می‌شود.</td></tr>
+<tr><td>چندبه‌چند (N:M)</td><td>جدول واسط با دو کلید خارجی ساخته می‌شود؛ کلید اصلی ترکیبی یا شناسه مستقل قابل استفاده است.</td></tr>
+<tr><td>بازگشتی (Self-reference)</td><td>یک فیلد خارجی به کلید اصلی همان جدول ارجاع می‌دهد؛ مانند <code>ManagerID</code>.</td></tr>
+</tbody>
+</table>
 
-۱. **Python 3.10 یا جدیدتر** را نصب کنید.
-۲. مخزن را دریافت یا دانلود و فایل‌ها را استخراج کنید.
-۳. فایل **`run_windows.bat`** را اجرا کنید. این فایل محیط مجازی ایجاد می‌کند و وابستگی‌های موردنیاز را نصب می‌کند؛ بار نخست به اینترنت نیاز است.
+<p dir="rtl" align="right">
+<strong>جامعیت ارجاعی:</strong> مقدار غیرتهیِ کلید خارجی باید به یک کلید معتبر در جدول مرجع اشاره کند. اگر فیلد خارجی اختیاری باشد، مقدار <code>NULL</code> می‌تواند مجاز باشد. هنگام ایجاد یا تغییر رابطه، برنامه ناسازگاری انواع داده و وجود مقادیر ارجاعی نامعتبر را بررسی می‌کند.
+</p>
 
-راه جایگزین با CMD در پوشه پروژه:
+<h2 dir="rtl" align="right">🖱️ طراحی رابطه بدون نوشتن کوئری</h2>
 
-```cmd
+<ol dir="rtl">
+<li>پایگاه داده را باز کنید و وارد <code>Database Diagram</code> شوید.</li>
+<li>جدول‌ها را ایجاد کنید یا از طریق گزینه <code>Design Table</code> آن‌ها را تغییر دهید.</li>
+<li>برای اتصال، یک فیلد کلید اصلی را به فیلد مقصد بکشید؛ یا گزینه <code>Draw Link (2 clicks)</code> را فعال کنید و دو فیلد را انتخاب کنید.</li>
+<li>در پنجره <code>Relationship Wizard</code> نوع ارتباط و فیلدهای انتخاب‌شده را بررسی کنید.</li>
+<li>برای حذف ارتباط، روی خط آن کلیک کنید و گزینه <code>Delete Relationship</code> را انتخاب کنید. حذف رابطه با تأیید انجام می‌شود؛ خود جدول و داده‌هایش باقی می‌مانند.</li>
+</ol>
+
+<h2 dir="rtl" align="right">🛠️ فناوری‌های استفاده‌شده</h2>
+
+<table dir="rtl">
+<thead><tr><th>بخش</th><th>فناوری</th></tr></thead>
+<tbody>
+<tr><td>زبان برنامه‌نویسی</td><td><code>Python 3.12</code></td></tr>
+<tr><td>رابط دسکتاپ</td><td><code>PySide6 / Qt 6</code></td></tr>
+<tr><td>موتور پایگاه داده</td><td><code>SQLite 3</code></td></tr>
+<tr><td>طراحی نمودار</td><td><code>QGraphicsView / QGraphicsScene</code></td></tr>
+<tr><td>ساخت فایل اجرایی ویندوز</td><td><code>PyInstaller</code></td></tr>
+<tr><td>نصب‌کننده</td><td><code>Inno Setup 6</code></td></tr>
+<tr><td>آزمون‌های خودکار</td><td><code>unittest</code></td></tr>
+</tbody>
+</table>
+
+<h2 dir="rtl" align="right">💻 راه‌اندازی روی ویندوز</h2>
+
+<ol dir="rtl">
+<li>نسخه <strong>Python 3.10 یا جدیدتر</strong> را نصب کنید.</li>
+<li>مخزن را دانلود یا کلون کنید و وارد پوشه اصلی پروژه شوید.</li>
+<li>فایل <code>run_windows.bat</code> را اجرا کنید. در اولین اجرا، نصب بسته‌های لازم به اینترنت نیاز دارد.</li>
+<li>برای ساخت نسخه مستقل ویندوز، فایل <code>build_windows.bat</code> را اجرا کنید.</li>
+</ol>
+
+<p dir="rtl" align="right">یا برنامه را با دستورهای زیر از داخل پوشه پروژه اجرا کنید:</p>
+
+```powershell
 py -3 -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt
-.venv\Scripts\python.exe src\main.py
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe src\main.py
 ```
 
-اگر لانچر `py` به نسخه حذف‌شده پایتون اشاره می‌کند، از `run_windows.bat` استفاده کنید که تشخیص مفسر سالم را انجام می‌دهد.
+<p dir="rtl" align="right">
+<strong>محل خروجی EXE بعد از ساخت موفق:</strong><br>
+<code>dist\SQLServerSimulator\SQLServerSimulator.exe</code><br>
+برای اجرا یا انتقال برنامه، کل پوشه <code>SQLServerSimulator</code> را نگه دارید. ساخت فایل نصب <code>Setup</code> به نصب <code>Inno Setup 6</code> نیاز دارد. خروجی‌های کامپایل‌شده به‌طور پیش‌فرض داخل سورس این مخزن قرار ندارند.
+</p>
 
-## ساخت EXE و فایل نصب
+<h2 dir="rtl" align="right">🧪 اجرای آزمون‌ها</h2>
 
-- فایل **`build_windows.bat`** را اجرا کنید؛ قبل از بسته‌بندی، آزمون‌ها اجرا می‌شوند.
-- خروجی برنامه در صورت موفقیت: `dist\SQLServerSimulator\SQLServerSimulator.exe` (تمام پوشه را نگه دارید).
-- با نصب **Inno Setup 6**، خروجی نصب‌کننده در صورت موفقیت: `installer_out\SQL_Server_Simulator_Setup_v0.6.1.exe`.
-- امکان ساخت نسخه ویندوزی از طریق **GitHub Actions** نیز وجود دارد؛ پس از اجرای موفق Workflow، خروجی از قسمت Artifacts دریافت می‌شود.
-- اگر آنتی‌ویروس نسبت به فایل اجرایی هشدار داد، جزئیات هشدار را بررسی کنید و برای ساخت برنامه، محافظت امنیتی را غیرفعال نکنید.
-
-## آزمون‌ها
-
-```cmd
-.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-آزمون‌های گرافیکی به PySide6 و محیط Qt مناسب نیاز دارند. Workflow مخزن آزمون‌ها را روی ویندوز اجرا می‌کند.
+<p dir="rtl" align="right">
+آزمون‌های رابط گرافیکی به کتابخانه <code>PySide6</code> و یک محیط قابل اجرای Qt نیاز دارند. وضعیت ساخت خودکار ویندوز را می‌توان در تب <code>Actions</code> مخزن مشاهده کرد.
+</p>
 
-## فایل‌های نمونه آموزشی
+<h2 dir="rtl" align="right">📁 نمونه‌های آموزشی</h2>
 
-- [`examples/Diagram_Training_v0_4.db`](examples/Diagram_Training_v0_4.db): نمونه روابط 1:1، 1:N، N:M و بازگشتی.
-- [`examples/Drag_to_Connect_v0_5.db`](examples/Drag_to_Connect_v0_5.db): تمرین اتصال مستقیم فیلدها در نمودار.
-- [`examples/Sample_SQLServer_2022.sql`](examples/Sample_SQLServer_2022.sql): نمونه اسکریپت تولیدشده.
+<ul dir="rtl">
+<li><a href="examples/Diagram_Training_v0_4.db"><code>Diagram_Training_v0_4.db</code></a>: نمونه ارتباط‌های یک‌به‌یک، یک‌به‌چند، چندبه‌چند و بازگشتی.</li>
+<li><a href="examples/Drag_to_Connect_v0_5.db"><code>Drag_to_Connect_v0_5.db</code></a>: نمونه تمرین اتصال فیلدبه‌فیلد.</li>
+<li><a href="examples/Sample_SQLServer_2022.sql"><code>Sample_SQLServer_2022.sql</code></a>: نمونه خروجی اسکریپتی برای SQL Server.</li>
+</ul>
 
-## گزارش خطا و بازخورد
+<p dir="rtl" align="right">
+<strong>درباره پشتیبان‌گیری:</strong> خروجی <code>.sql</code>، اسکریپت ساختار و داده است و با بکاپ باینری واقعی SQL Server با پسوند <code>.bak</code> تفاوت دارد. سازگاری تمام خروجی‌ها با همه نسخه‌های SQL Server آزمایش نشده است.
+</p>
 
-این نسخه **آزمایشی** است. اگر هنگام ایجاد جدول، طراحی رابطه، اجرای Query یا کار با محیط گرافیکی با مشکلی مواجه شدید، شرح خطا و در صورت امکان تصویر آن را به این نشانی بفرستید:
+<h2 dir="rtl" align="right">🐞 گزارش خطا و پیشنهادها</h2>
 
-**[Ali.sayyadi200@gmail.com](mailto:Ali.sayyadi200@gmail.com)**
+<p dir="rtl" align="right">
+این نسخه <strong>آزمایشی</strong> است و ممکن است باگ داشته باشد. در صورت مشاهده مشکل، نام بخش مربوط، مراحل ایجاد خطا و در صورت امکان تصویر یا متن پیام خطا را ارسال کنید:
+</p>
 
-## حقوق نرم‌افزار و وابستگی‌ها
+<p dir="rtl" align="right">
+📧 <a href="mailto:Ali.sayyadi200@gmail.com?subject=SQL%20Server%20Simulator%20v0.6.1%20-%20Bug%20Report">Ali.sayyadi200@gmail.com</a>
+</p>
 
-برای کد اختصاصی این پروژه هنوز مجوز متن‌باز انتخاب نشده است؛ عمومی‌بودن مخزن به معنی اجازه خودکار برای کپی، تغییر یا بازتوزیع نیست. اجزای شخص ثالث تابع مجوزهای خودشان هستند. پیش از انتشار فایل اجرایی، [`LICENSE_NOTICES.txt`](LICENSE_NOTICES.txt) را مطالعه کنید. نام‌های Microsoft و SQL Server علامت تجاری مایکروسافت هستند.
+<h2 dir="rtl" align="right">📄 حقوق و مجوزها</h2>
+
+<p dir="rtl" align="right">
+<strong>طراحی و توسعه:</strong> علی صیادی. برای کد اختصاصی پروژه هنوز مجوز متن‌باز مشخصی اعلام نشده است. مجوزهای کتابخانه‌ها و اجزای شخص ثالث در فایل <a href="LICENSE_NOTICES.txt"><code>LICENSE_NOTICES.txt</code></a> توضیح داده شده‌اند. نام‌های Microsoft و SQL Server متعلق به صاحبان نشان‌های تجاری آن‌ها هستند و این پروژه وابستگی رسمی به مایکروسافت ندارد.
+</p>
