@@ -3,7 +3,7 @@ setlocal EnableExtensions
 cd /d "%~dp0"
 chcp 65001 >nul
 
-echo SQL Server Simulator 0.6.1 - Run from source
+echo SQL Server Simulator 0.8.7 - Run from source
 call "%~dp0detect_python.bat"
 if errorlevel 1 goto failed
 

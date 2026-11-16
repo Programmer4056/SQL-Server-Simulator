@@ -1,8 +1,9 @@
-"""User-facing UI strings. English default; Persian supports right-to-left labels."""
+"""User-facing UI strings. Version numbers are never hard-coded in translations."""
+from version_info import APP_VERSION, QA_LEAD_FA, QA_LEAD_EN
 STRINGS = {
  'en': {
  'app_name':'SQL Server Simulator', 'subtitle':'DATABASE DESIGN STUDIO  /  EDUCATIONAL EDITION',
- 'byline':'Designed & developed by Ali Sayyadi', 'v_notice':'Initial version 0.6.1 | May contain bugs',
+ 'byline':'Designed & developed by Ali Sayyadi', 'qa_byline':'Software testing & quality assurance: {qa_lead}', 'v_notice':'Preview version {version} | May contain bugs',
  'file':'File','database':'Database','design':'Design','view':'View','help':'Help',
  'new_database':'New Database','open_database':'Open Database','close_database':'Close Database','exit':'Exit',
  'new_table':'New Table','new_relation':'Relationship Wizard','demo':'Create Teaching Sample',
@@ -10,7 +11,7 @@ STRINGS = {
  'sql_editor':'SQL Query','diagram':'Database Diagram','results':'Results','messages':'Messages',
  'object_explorer':'Object Explorer','properties':'Properties & Learning Guide',
  'no_db':'No database is open', 'no_db_detail':'Start with a new database, or open an existing .db project.',
- 'welcome_title':'Design databases. Connect tables. Understand SQL.',
+ 'welcome_title':'Design databases visually',
  'welcome_desc':'A desktop SQL learning environment with table designer, relationship wizards and live ER diagrams. No SQL Server installation required.',
  'new_project':'Create database','open_project':'Open an existing database',
  'tables':'Tables','columns':'Columns','identity':'Identity (database generated)',
@@ -23,7 +24,7 @@ STRINGS = {
  'db_review':'A new .db file will be created in this folder.',
  'tbl_title':'Table Designer','table_name':'Table name','column_name':'Column name','data_type':'Data type',
  'primary_key':'Primary key','not_null':'Not null','auto_increment':'Auto Increment','add_column':'Add column',
- 'remove_column':'Remove selected','save_table':'Create table','cancel':'Cancel',
+ 'remove_column':'Remove selected','save_table':'Create table','save_changes':'Save Changes','cancel':'Cancel',
  'auto_hint':'Choose a SQL data type from the dropdown or use … to set length. For IDENTITY check AI then click ⚙ to configure Seed / Increment.',
  'relation_title':'Relationship Wizard','relation_intro':'Select a relationship type',
  'relation_intro_text':'The wizard creates actual foreign-key constraints, not diagram-only lines.',
@@ -43,7 +44,7 @@ STRINGS = {
  'insert':'Insert into database','saved_id':'Row saved. Database-generated row ID: {id}',
  'err':'Operation could not be completed','success':'Success','query_completed':'Query executed successfully.',
  'rows_count':'{count} row(s)','try_sql':'SELECT * FROM "Student";',
- 'about_text':'SQL Server Simulator 0.6.1\nDesigned & developed by Ali Sayyadi\n\nInitial preview. This software may contain bugs.\nEmail: Ali.sayyadi200@gmail.com\n\nDesktop teaching tool inspired by SQL Server Management Studio. The execution engine is SQLite, NOT Microsoft SQL Server. It is not affiliated with Microsoft. T-SQL compatibility is limited.',
+ 'about_text':'<div dir="ltr" style="text-align:left;"><h3>SQL Server Simulator <span dir="ltr">v{version}</span></h3><p>Designed &amp; developed by Ali Sayyadi</p><p><b>Software testing &amp; quality assurance:</b> {qa_lead}</p><p><b>Preview software:</b> May contain bugs.</p><p>Bug reports: Ali.sayyadi200@gmail.com</p><p>Educational design tool inspired by SSMS. The engine is SQLite, not Microsoft SQL Server. T-SQL features are limited; this project is not affiliated with Microsoft.</p></div>',
  'table_note':'Select a table in Object Explorer. Double-click to open data.',
  'guide_hint':'Keys are enforced by the database engine. PK = primary key; FK = foreign key; AI = generated identity.',
  'guide_empty':'Select a table to inspect its columns and foreign keys.',
@@ -58,10 +59,15 @@ STRINGS = {
  'clear_queries':'Clear SQL editor','close':'Close','choose':'Choose',
  'tip':'Tip: Use New Table and Relationship Wizard to design without typing SQL.',
  'theme_saved':'Appearance settings are saved automatically.',
+ 'diagram_drag':'Connect by Drag','diagram_reopen':'Reopen Tables',
+ 'diagram_auto_layout':'Auto Layout','diagram_draw':'Draw Link (2 clicks)',
+ 'diagram_delete':'Delete Link','diagram_fit':'Fit Diagram',
+ 'diagram_zoom_in':'Zoom In','diagram_zoom_out':'Zoom Out',
+ 'diagram_hint':'Tip: choose Draw Link and click a parent key, then a child field.',
  },
  'fa': {
  'app_name':'شبیه‌ساز SQL Server','subtitle':'محیط آموزشی طراحی پایگاه داده',
- 'byline':'طراحی و ساخت: علی صیادی','v_notice':'نسخه اولیه ۰.۶.۰ | این نسخه ممکن است دارای خطا باشد',
+ 'byline':'طراحی و ساخت: علی صیادی', 'qa_byline':'مسئول آزمون و ارزیابی نرم‌افزار: {qa_lead}','v_notice':'نسخه آزمایشی {version} | ممکن است دارای خطا باشد',
  'file':'فایل','database':'پایگاه داده','design':'طراحی','view':'نمایش','help':'راهنما',
  'new_database':'پایگاه داده جدید','open_database':'باز کردن پایگاه داده','close_database':'بستن پایگاه داده','exit':'خروج',
  'new_table':'جدول جدید','new_relation':'راهنمای ایجاد رابطه','demo':'ایجاد مثال آموزشی',
@@ -69,7 +75,7 @@ STRINGS = {
  'sql_editor':'ویرایشگر SQL','diagram':'نمودار پایگاه داده','results':'نتایج','messages':'پیام‌ها',
  'object_explorer':'کاوشگر اشیا','properties':'ویژگی‌ها و راهنمای آموزشی',
  'no_db':'پایگاه داده‌ای باز نیست','no_db_detail':'یک پایگاه داده ایجاد کنید یا فایل پروژه را باز کنید.',
- 'welcome_title':'طراحی پایگاه داده، ساده و تصویری',
+ 'welcome_title':'طراحی پایگاه داده',
  'welcome_desc':'نرم‌افزار دسکتاپ آموزش SQL با طراح جدول، راهنمای تصویری روابط و نمودار تعاملی. بدون نیاز به SQL Server.',
  'new_project':'ایجاد پایگاه داده','open_project':'باز کردن پایگاه داده',
  'tables':'جدول‌ها','columns':'ستون‌ها','identity':'شناسه خودکار (تولیدشده توسط پایگاه داده)',
@@ -82,7 +88,7 @@ STRINGS = {
  'db_review':'فایل جدید با پسوند db. در این پوشه ایجاد می‌شود.',
  'tbl_title':'طراح جدول','table_name':'نام جدول','column_name':'نام ستون','data_type':'نوع داده',
  'primary_key':'کلید اصلی','not_null':'اجباری','auto_increment':'شماره خودکار','add_column':'افزودن ستون',
- 'remove_column':'حذف ستون انتخاب‌شده','save_table':'ساخت جدول','cancel':'انصراف',
+ 'remove_column':'حذف ستون انتخاب‌شده','save_table':'ساخت جدول','save_changes':'ذخیره تغییرات','cancel':'انصراف',
  'auto_hint':'نوع داده را از فهرست انتخاب کنید یا با … طول را تنظیم کنید. برای شناسه خودکار، مربع مربوطه و سپس ⚙ را برای Seed / Increment بزنید.',
  'relation_title':'راهنمای ایجاد روابط','relation_intro':'نوع رابطه را انتخاب کنید',
  'relation_intro_text':'رابطه‌ها صرفاً خطوط نمایشی نیستند؛ کلیدهای خارجی واقعی ایجاد می‌شوند.',
@@ -102,7 +108,7 @@ STRINGS = {
  'insert':'ثبت در پایگاه داده','saved_id':'رکورد ثبت شد. شناسه تولیدشده: {id}',
  'err':'عملیات انجام نشد','success':'موفق','query_completed':'پرس‌وجو اجرا شد.',
  'rows_count':'تعداد {count} رکورد','try_sql':'SELECT * FROM "Student";',
- 'about_text':'شبیه‌ساز SQL Server نسخه ۰.۶.۰\nطراحی و ساخت: علی صیادی\n\nنسخه آزمایشی؛ ممکن است خطا داشته باشد.\nایمیل گزارش خطا: Ali.sayyadi200@gmail.com\n\nابزار آموزشی الهام‌گرفته از محیط SSMS است؛ موتور اجرای آن SQLite است و خود SQL Server نیست. وابسته به Microsoft نیست و سازگاری T-SQL محدود است.',
+ 'about_text':'<div dir="rtl" style="text-align:right;"><h3>شبیه‌ساز SQL Server | <span dir="ltr">v{version}</span></h3><p>طراحی و ساخت: علی صیادی</p><p><b>مسئول آزمون و ارزیابی نرم‌افزار:</b> {qa_lead}</p><p><b>نسخه آزمایشی:</b> ممکن است دارای خطا باشد.</p><p>ایمیل گزارش خطا: <span dir="ltr">Ali.sayyadi200@gmail.com</span></p><p>ابزار آموزشی الهام‌گرفته از SSMS با موتور SQLite است، نه Microsoft SQL Server. پشتیبانی از T-SQL محدود است و نرم‌افزار وابسته به مایکروسافت نیست.</p></div>',
  'table_note':'یک جدول را انتخاب و برای دیدن داده‌هایش دوبار کلیک کنید.',
  'guide_hint':'کلیدها در موتور پایگاه داده اعمال می‌شوند. PK اصلی، FK خارجی، AI تولید خودکار.',
  'guide_empty':'جدول را انتخاب کنید تا ستون‌ها و روابط آن نمایش داده شود.',
@@ -117,9 +123,20 @@ STRINGS = {
  'clear_queries':'پاک‌کردن ویرایشگر SQL','close':'بستن','choose':'انتخاب',
  'tip':'نکته: با طراح جدول و راهنمای روابط، بدون نوشتن SQL طراحی کنید.',
  'theme_saved':'تنظیمات ظاهر به‌طور خودکار ذخیره می‌شوند.',
+ 'diagram_drag':'اتصال با کشیدن','diagram_reopen':'بازکردن جدول‌ها',
+ 'diagram_auto_layout':'چیدمان خودکار','diagram_draw':'رسم رابطه (دو کلیک)',
+ 'diagram_delete':'حذف رابطه','diagram_fit':'نمایش کل نمودار',
+ 'diagram_zoom_in':'بزرگ‌نمایی','diagram_zoom_out':'کوچک‌نمایی',
+ 'diagram_hint':'برای رسم رابطه، ابتدا کلید والد و سپس فیلد فرزند را انتخاب کنید.',
  }
 }
 
 def tr(key: str, language: str = 'en', **kwargs) -> str:
     template = STRINGS.get(language,STRINGS['en']).get(key, STRINGS['en'].get(key, key))
+    if key in ('v_notice', 'about_text', 'qa_byline'):
+        # LRM isolates the ASCII version in a Persian sentence. In rich HTML,
+        # the explicit ltr span gives the version the correct character order.
+        kwargs.setdefault('qa_lead', QA_LEAD_FA if language=='fa' else QA_LEAD_EN)
+        kwargs.setdefault('version', APP_VERSION if key == 'about_text' or language != 'fa'
+                          else '\u200e'+APP_VERSION+'\u200e')
     return template.format(**kwargs) if kwargs else template

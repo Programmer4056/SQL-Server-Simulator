@@ -14,18 +14,18 @@ def palette(theme):
 def make_qss(theme):
     p=palette(theme)
     return '''
-    QWidget {background:%(surface)s; color:%(text)s; font-size:10pt;}
+    QWidget {background:%(surface)s; color:%(text)s; font-size:11pt;}
     QMainWindow, QDialog, QWizard {background:%(bg)s;}
-    QMenuBar {background:%(surface)s; border-bottom:1px solid %(line)s; padding:3px;}
+    QMenuBar {font-size:11pt; background:%(surface)s; border-bottom:1px solid %(line)s; padding:3px;}
     QMenuBar::item {padding:6px 12px; border-radius:5px;}
     QMenuBar::item:selected {background:%(secondary)s;}
-    QMenu {background:%(surface)s; border:1px solid %(line)s; padding:5px;}
+    QMenu {font-size:11pt; background:%(surface)s; border:1px solid %(line)s; padding:5px;}
     QMenu::item {padding:7px 20px; border-radius:4px;}
     QMenu::item:selected {background:%(selection)s;}
     QToolBar {background:%(surface)s; border-bottom:1px solid %(line)s; spacing:8px; padding:8px;}
-    QToolButton {background:transparent; color:%(text)s; border-radius:5px; padding:7px;}
+    QToolButton {font-size:11pt; background:transparent; color:%(text)s; border-radius:5px; padding:7px;}
     QToolButton:hover {background:%(secondary)s;}
-    QPushButton {background:%(secondary)s; border:1px solid %(line)s; border-radius:7px; padding:8px 14px; font-weight:500;}
+    QPushButton {font-size:11pt; background:%(secondary)s; border:1px solid %(line)s; border-radius:7px; padding:8px 14px; font-weight:500;}
     QPushButton:hover {border:1px solid %(accent)s; background:%(selection)s;}
     QPushButton:pressed {background:%(line)s;}
     QPushButton[role="primary"] {background:%(accent)s; color:white; border:1px solid %(accent)s; font-weight:600;}
@@ -38,14 +38,20 @@ def make_qss(theme):
     QPlainTextEdit {background:%(editor)s; color:%(text)s; border:0; selection-background-color:%(selection)s;}
     QTextEdit {background:%(panel)s; border:1px solid %(line)s; color:%(text)s; border-radius:6px;}
     QTreeWidget, QTableWidget {background:%(surface)s; alternate-background-color:%(panel)s; color:%(text)s; border:none; gridline-color:%(line)s; selection-background-color:%(selection)s; selection-color:%(text)s;}
-    QTreeWidget::item {height:26px; padding:2px 4px;}
+    QTreeWidget::item {height:30px; padding:2px 4px;}
     QTreeWidget::item:hover {background:%(secondary)s;}
     QHeaderView::section {background:%(secondary)s; color:%(text)s; border:0; border-right:1px solid %(line)s; border-bottom:1px solid %(line)s; padding:8px; font-weight:600;}
     QTabWidget::pane {border:1px solid %(line)s; background:%(surface)s;}
-    QTabBar::tab {background:%(panel)s; color:%(muted)s; border-right:1px solid %(line)s; padding:10px 19px; min-width:90px;}
+    QTabBar::tab {font-size:11pt; background:%(panel)s; color:%(muted)s; border-right:1px solid %(line)s; padding:10px 19px; min-width:90px;}
     QTabBar::tab:selected {background:%(surface)s; color:%(accent)s; border-top:2px solid %(accent)s; font-weight:600;}
+    QPushButton#clearTabCloseButton {padding:0px; margin:0px; color:%(text)s; background:%(secondary)s; border:1px solid %(line)s; border-radius:5px; font-size:14pt; font-weight:600;}
+    QPushButton#clearTabCloseButton:hover {background:%(selection)s; border:1px solid %(accent)s;}
     QDockWidget {color:%(text)s; font-weight:600;}
     QDockWidget::title {background:%(panel)s; border-bottom:1px solid %(line)s; padding:10px;}
+    QWidget#clearDockTitleBar {background:%(panel)s; border-bottom:1px solid %(line)s;}
+    QLabel#clearDockCaption {background:transparent; font-weight:600; font-size:10pt;}
+    QPushButton#dockCloseButton, QPushButton#dockFloatButton {background:%(secondary)s; color:%(text)s; padding:0; border:1px solid %(line)s; border-radius:5px; font-size:16pt; font-weight:600;}
+    QPushButton#dockCloseButton:hover, QPushButton#dockFloatButton:hover {background:%(selection)s; border-color:%(accent)s;}
     QSplitter::handle {background:%(line)s;}
     QStatusBar {background:%(accent)s; color:white; padding:2px 8px;}
     QStatusBar QLabel {background:transparent; color:white;}
@@ -60,10 +66,35 @@ def make_qss(theme):
     QLabel[role="eyebrow"] {font-size:9pt; color:%(accent)s; font-weight:700;}
     QScrollArea#welcomeScroll, QWidget#welcomeContainer {background:%(bg)s; border:none;}
     QFrame#welcomeCard {background:%(surface)s; border:1px solid %(line)s; border-radius:14px;}
-    QLabel#welcomeTitle {background:transparent; border:none; font-size:19pt; font-weight:700; color:%(text)s; padding:0px;}
-    QLabel#welcomeDescription {background:transparent; border:none; color:%(muted)s; font-size:10.5pt; padding:0px;}
-    QLabel#welcomeAuthor {background:transparent; color:%(text)s; border:none; font-size:10pt; font-weight:600;}
+    QLabel#welcomeTitle {background:transparent; border:none; font-size:15pt; font-weight:700; color:%(text)s; padding:0px;}
+    QLabel#welcomeDescription {background:transparent; border:none; color:%(muted)s; font-size:10pt; padding:0px;}
+    QLabel#welcomeAuthor {background:transparent; color:%(text)s; border:none; font-size:9.5pt; font-weight:600;}
     QLabel#welcomeNotice {background:transparent; color:%(muted)s; border:none; font-size:9pt;}
     QFrame#welcomeDivider {background:%(line)s; border:none; max-height:1px;}
     QPushButton#welcomeBugButton {background:transparent; border:none; color:%(accent)s; text-decoration:underline;}
     ''' % p
+
+def apply_palette(app,theme):
+    """Make even Qt-generated system icons and dock controls legible in dark mode."""
+    from PySide6.QtGui import QColor,QPalette
+    p=palette(theme)
+    pal=QPalette()
+    entries={
+        QPalette.ColorRole.Window:p['bg'],
+        QPalette.ColorRole.WindowText:p['text'],
+        QPalette.ColorRole.Base:p['editor'],
+        QPalette.ColorRole.AlternateBase:p['panel'],
+        QPalette.ColorRole.ToolTipBase:p['surface'],
+        QPalette.ColorRole.ToolTipText:p['text'],
+        QPalette.ColorRole.Text:p['text'],
+        QPalette.ColorRole.Button:p['secondary'],
+        QPalette.ColorRole.ButtonText:p['text'],
+        QPalette.ColorRole.Highlight:p['accent'],
+        QPalette.ColorRole.HighlightedText:'#ffffff',
+        QPalette.ColorRole.Link:p['accent'],
+        QPalette.ColorRole.PlaceholderText:p['muted'],
+    }
+    for role,color in entries.items():
+        pal.setColor(role,QColor(color))
+    app.setPalette(pal)
+    app.setStyleSheet(make_qss(theme))

@@ -74,8 +74,12 @@ class ClickToLinkTests(unittest.TestCase):
                 QApplication.processEvents()
                 title=panel.findChild(QLabel,'welcomeTitle')
                 desc=panel.findChild(QLabel,'welcomeDescription')
-                self.assertGreaterEqual(title.height(),135)
-                self.assertGreaterEqual(desc.height(),115)
+                # The redesigned card is intentionally compact. Test content
+                # visibility rather than the obsolete 135/115 px layout.
+                self.assertTrue(title.wordWrap())
+                self.assertTrue(desc.wordWrap())
+                self.assertGreaterEqual(title.height(),title.minimumHeight())
+                self.assertGreaterEqual(desc.height(),desc.minimumHeight())
                 self.assertTrue(panel.findChild(QScrollArea,'welcomeScroll'))
                 panel.close()
 

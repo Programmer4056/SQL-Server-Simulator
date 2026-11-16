@@ -88,6 +88,9 @@ class LabDatabase:
         self.connection.row_factory = sqlite3.Row
         self.connection.execute('PRAGMA foreign_keys=ON')
         self._metadata()
+        # Restore persisted educational scalar UDF registrations on every open.
+        from tsql_modules import register_functions
+        register_functions(self)
 
     def close(self):
         self.connection.close()
@@ -158,8 +161,11 @@ class LabDatabase:
         return [dict(r) for r in self.connection.execute(f'PRAGMA foreign_key_list({q(table)})')]
 
     def _exists(self, table: str):
-        if table not in self.tables():
-            raise LabError(f'Table {table!r} does not exist.')
+        """Do not trust UI caches: consult SQLite's live schema each time."""
+        row=self.connection.execute("""SELECT name FROM sqlite_master
+                    WHERE type='table' AND lower(name)=lower(?)""",(identifier(table),)).fetchone()
+        if row is None or row[0].lower().startswith(('sqlite_','__lab_')):
+            raise LabError(f'Table {table!r} does not exist. Refresh Object Explorer and check the active database.')
 
     def primary_key(self, table: str) -> dict:
         self._exists(table)
@@ -396,16 +402,51 @@ class LabDatabase:
 
     def connect_fields(self, parent: str, parent_field: str, child: str, child_field: str,
                        kind: str = '1:N', required: bool = False,
-                       bridge: str | None = None, strategy: str = 'composite'):
+                       bridge: str | None = None, strategy: str = 'composite',
+                       composite_child_pk: bool = False):
         """Persist a validated visual link as a REAL database constraint."""
-        self.validate_field_link(parent,parent_field,child,child_field,kind,required)
+        if composite_child_pk and kind != '1:N':
+            raise LabError('A composite child key is only available for a 1:N relationship.')
+        self.validate_field_link(parent,parent_field,child,child_field,kind,required or composite_child_pk)
         if kind == '1:1':
             return self.one_to_one(parent,child)
         if kind == 'SELF':
             return self.self_reference(parent,child_field,required)
         if kind == 'N:M':
             return self.many_to_many(parent,child,bridge or f'{parent}_{child}_Link',strategy)
+        if composite_child_pk:
+            return self.one_to_many_composite(parent, child, child_field)
         return self.one_to_many(parent,child,child_field,required)
+
+    def one_to_many_composite(self, parent: str, child: str, fk_col: str):
+        """Create real 1:N constraint with the FK in a composite child PK.
+
+        The existing child PK must be non-IDENTITY. Rebuild transactionally;
+        existing values must pass uniqueness and referential-integrity checks.
+        """
+        parent, child, fk_col = identifier(parent), identifier(child), identifier(fk_col)
+        self._exists(parent); self._exists(child)
+        if parent == child:
+            raise LabError('Use the self-reference wizard for a recursive relationship.')
+        if self.identity_settings(child) is not None:
+            raise LabError('An IDENTITY primary key cannot be combined with another PK column. Disable IDENTITY first.')
+        if any(c['pk'] and c['name'].casefold() == fk_col.casefold() for c in self.columns(child)):
+            raise LabError('The selected child field already belongs to its primary key.')
+        parent_pk = self.primary_key(parent)
+        cols = self.design_columns(child)
+        matched = False
+        for n, c in enumerate(cols):
+            if c.name.casefold() == fk_col.casefold():
+                cols[n] = Column(c.name,c.type,True,True,False,c.seed,c.increment)
+                matched = True
+                break
+        if not matched:
+            cols.append(Column(fk_col,self.logical_type(parent,parent_pk['name']),True,True))
+        self.edit_table(child, cols, extra_foreign_keys=[(fk_col,parent,parent_pk['name'])])
+        with self.connection:
+            self.connection.execute('INSERT INTO __lab_relationships(kind,parent,child,fk_column,bridge) VALUES(?,?,?,?,?)',
+                                    ('1:N',parent,child,fk_col,''))
+        return f'{parent}.{parent_pk["name"]} (1) → {child}.{fk_col} (N; composite child PK)'
 
     def one_to_many(self, parent: str, child: str, fk_col: str, required: bool = True):
         parent, child = identifier(parent), identifier(child)
@@ -812,10 +853,72 @@ class LabDatabase:
                     names, rows = [], []
                     msg = f'Statement completed. Rows affected: {max(cursor.rowcount, 0)}'
             self.connection.commit()
+            if any(re.match(r'\s*(?:CREATE|DROP|ALTER)\b',part,re.I) for part in statements):
+                self.reconcile_schema()
             return names, rows, msg
         except sqlite3.Error as exc:
             self.connection.rollback()
             raise LabError(f'SQL error: {exc}') from exc
+
+    def reconcile_schema(self):
+        """Discard only stale simulator metadata after external/Query Editor DDL.
+
+        This is not a substitute for refreshing the UI; it prevents phantom table
+        references after DROP TABLE or external schema edits.
+        """
+        actual=set(self.tables())
+        with self.connection:
+            for meta in ('__lab_positions','__lab_identity','__lab_column_types'):
+                key='table_name'
+                for row in self.connection.execute(f'SELECT DISTINCT table_name FROM {meta}').fetchall():
+                    if row[0] not in actual:
+                        self.connection.execute(f'DELETE FROM {meta} WHERE {key}=?',(row[0],))
+            self.connection.execute('DELETE FROM __lab_relationships WHERE parent NOT IN ('+
+                'SELECT name FROM sqlite_master WHERE type="table") OR child NOT IN ('+
+                'SELECT name FROM sqlite_master WHERE type="table")')
+            if self.connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='__lab_permissions'").fetchone():
+                self.connection.execute("DELETE FROM __lab_permissions WHERE object_name NOT IN (SELECT name FROM sqlite_master WHERE type='table')")
+
+    def drop_table(self, table: str):
+        """Delete a table ONLY with explicit user confirmation at the UI layer.
+
+        Never cascade: any referencing table blocks the operation, even when empty.
+        """
+        table=identifier(table)
+        self._exists(table)
+        inbound=[name for name in self.tables() if name.casefold()!=table.casefold()
+                 and any(fk['table'].casefold()==table.casefold() for fk in self.foreign_keys(name))]
+        if inbound:
+            raise LabError(f'Cannot DROP {table}: referenced by '+', '.join(sorted(inbound))+
+                           '. Remove their foreign-key relationships first.')
+        try:
+            with self.connection:
+                self.connection.execute(f'DROP TABLE {q(table)}')
+                for meta in ('__lab_positions','__lab_identity','__lab_column_types'):
+                    self.connection.execute(f'DELETE FROM {meta} WHERE table_name=?',(table,))
+                self.connection.execute('DELETE FROM __lab_relationships WHERE parent=? OR child=?',(table,table))
+                if self.connection.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='__lab_permissions'").fetchone():
+                    self.connection.execute('DELETE FROM __lab_permissions WHERE object_name=?',(table,))
+        except sqlite3.Error as exc:
+            raise LabError('DROP TABLE failed: '+str(exc)) from exc
+        return f'Table {table} and its rows were permanently deleted.'
+
+    def drop_column(self, table: str, column: str):
+        """Remove a column via the validated transactional table designer."""
+        self._exists(table)
+        column=identifier(column)
+        cols=self.design_columns(table)
+        if not any(c.name.casefold()==column.casefold() for c in cols):
+            raise LabError(f'Column {table}.{column} does not exist.')
+        if next(c for c in cols if c.name.casefold()==column.casefold()).primary:
+            raise LabError('Primary-key columns cannot be dropped. Redesign the key first.')
+        remaining=[c for c in cols if c.name.casefold()!=column.casefold()]
+        self.edit_table(table,remaining)
+        return f'Column {table}.{column} and its stored values were deleted.'
+
+    def schema_version(self):
+        """SQLite schema cookie, used to detect external CREATE/DROP/ALTER edits."""
+        return int(self.connection.execute('PRAGMA schema_version').fetchone()[0])
 
     def backup(self, target: str | Path):
         dest = sqlite3.connect(str(target))

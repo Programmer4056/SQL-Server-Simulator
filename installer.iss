@@ -1,5 +1,5 @@
 #define AppName "SQL Server Simulator"
-#define AppVersion "0.6.1"
+#define AppVersion "0.8.9"
 #define AppExe "SQLServerSimulator.exe"
 
 [Setup]
@@ -20,7 +20,7 @@ WizardSmallImageFile=assets\wizard_small.bmp
 SetupIconFile=assets\app.ico
 InfoBeforeFile=NOTICE_EN.txt
 OutputDir=installer_out
-OutputBaseFilename=SQL_Server_Simulator_Setup_v0.6.1
+OutputBaseFilename=SQL_Server_Simulator_Setup_v0.8.9
 Compression=lzma2
 SolidCompression=yes
 ArchitecturesAllowed=x64compatible
@@ -28,7 +28,7 @@ UninstallDisplayIcon={app}\{#AppExe}
 CloseApplications=yes
 VersionInfoDescription=Educational SQL Server Simulator - Ali Sayyadi
 VersionInfoCompany=Ali Sayyadi
-VersionInfoVersion=0.6.1
+VersionInfoVersion=0.8.9
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -40,6 +40,8 @@ Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription:
 Source: "dist\SQLServerSimulator\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "LICENSE_NOTICES.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "NOTICE_EN.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "README.md"; DestDir: "{app}"; Flags: ignoreversion
+Source: "README_EN.md"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExe}"

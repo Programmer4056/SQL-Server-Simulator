@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=SQL Server Simulator
+Comment=Educational SQL Server-inspired database design tool
+Exec=SQLServerSimulator
+Icon=app
+Terminal=false
+Categories=Education;Development;Database;

@@ -1,73 +1,116 @@
-# v0.6.1 fixes
+# v0.8.9: closable panels and offline Windows EXE
 
-- Diagram two-click and direct-drag linking fixed: moving preview no longer intercepts the destination field.
-- New Fit Diagram and 100% controls prevent tiny non-clickable fields.
-- Welcome title and description now use larger minimum heights and scroll vertically on smaller windows.
-- Windows pre-build tests simulate mouse movements and verify welcome geometry (test_qt_click_link_v061.py).
-
-# SQL Server Simulator v0.6.1 | New diagram tools
-
-Designed and developed by **Ali Sayyadi**. Initial preview; bugs may exist. Report: `Ali.sayyadi200@gmail.com`.
-
-## New in 0.6
-
-- **Select a relationship:** Click its line or its label in Database Diagram. The selected line highlights and details appear in Properties.
-- **Delete a relationship:** Right-click the line, press the Delete key with the diagram focused, or use **Delete Link**. Confirm the action. This removes a **real FK constraint** but preserves the related tables, columns and data. Future invalid references will no longer be blocked for that relationship.
-- **Delete an N:M relationship:** Click the dashed N:M annotation to remove both physical FKs of the junction in one transactional rebuild. The junction table and its records remain intact. Deleting only one bridge FK removes only that FK.
-- **Manual relationship drawing:** Choose **Draw Link (2 clicks)**, click a parent PK field, then a child FK field to open the mapping wizard. Press Esc to cancel. Direct field drag-and-drop is still available.
-- **Welcome panel:** Readable separated labels, wrapping, bilingual text direction, warning, and direct Gmail bug report.
-
-## Start on Windows
-
-Extract the full ZIP into a new folder. Run `run_windows.bat` to test the application, then `build_windows.bat` to create a distributable EXE. Inno Setup 6 is needed for a Setup installer. Before changing schema, back up your `.db` file. If Windows security blocks packaging, investigate Protection History instead of disabling antivirus.
-
-This is a teaching application with an SQLite engine, not Microsoft SQL Server or the official SSMS. It does not implement all T-SQL features.
+- Obvious × controls on Object Explorer, Properties and Results docks; reopen from **View**.
+- SQL Editor and Database Diagram tabs can be closed and reopened without discarding their content.
+- `build_windows_offline.bat` creates a **single-file offline Windows EXE** bundling Python and Qt dependencies; university machines need no Python installation or internet.
+- See [`OFFLINE_DEPLOYMENT_FA.md`](OFFLINE_DEPLOYMENT_FA.md) for delivery options.
 
 ---
 
-# SQL Server Simulator v0.6.1 (Windows desktop)
+# v0.8.8: Welcome screen and SQL Server scripting
 
-**Designed and developed by Ali Sayyadi**. Report bugs from Help > Report a bug via Gmail or email `Ali.sayyadi200@gmail.com`.
+- Compact one-line Persian/English welcome titles with measured minimum label heights and scrollable layout. Credits for Ali Sayyadi and Mahan Pakravan-Nasab remain visible.
+- Generate Scripts produces SQL Server-oriented T-SQL for the supported subset: tables, primary/foreign keys, unique constraints, simple indexes, rows, Unicode, and IDENTITY(seed,increment). Schema/data ordering is appropriate for SSMS execution.
+- Unsafe SQLite-specific schema features now raise explicit errors instead of silently disappearing.
+- Example: [`examples/SQLServer_2022_TSQL_v0_8_8.sql`](examples/SQLServer_2022_TSQL_v0_8_8.sql).
+- **Limits:** SQL script, not a `.bak`; no complete View/Procedure/Function/user/permission export; no live Microsoft SQL Server verification in this environment. Test against a non-production SQL Server instance.
 
-Educational Qt/PySide6 + SQLite-based alternative **inspired by** SSMS, not Microsoft SQL Server. This preview may contain bugs. It is not affiliated with Microsoft and does not implement all T-SQL features.
+---
 
-## v0.5: Direct field mapping and closable views
+# SQL Server Simulator v0.8.7
 
-- Drag from a **parent PK field row** to a **child FK field row** in Database Diagram. This works without switching on Connect by Drag. Drag the **table header** to reposition a table.
-- A field-mapping wizard opens with your exact selected columns. Choose 1:N, shared-key 1:1, N:M (creates a real junction table), or SELF hierarchy. Existing columns or a new FK column can be selected where applicable.
-- Constraints are checked before changing the schema: PK target, type compatibility, existing orphan values, NULL for required FKs, and FK reuse. Invalid changes are blocked, preserving data.
-- Click **× on a table card** or right-click **Close table in diagram** to hide it without dropping it. Use the **Reopen Tables** button or the diagram's context menu to restore hidden cards.
-- Close a table data view using its **tab ×** or **Close View** button; the database is unchanged. Dialogs support Cancel and window close.
+## v0.8.7: Persian localization and responsive welcome card
 
-## Run and build
+- Localized the Database Diagram context menus, relationship actions, table visibility actions, and field-linking hints.
+- Applied RTL direction to Persian context menus. User-defined table/column identifiers remain unchanged.
+- Rebuilt the welcome card to size vertically with its contents and scroll on smaller viewports. Developer and QA credits are independent labels.
+- Synchronized the version with cross-platform builders and About text.
 
-1. Extract the complete archive into a **new folder**.
-2. Double-click `run_windows.bat` to use the Qt desktop app directly (Python 3.10+; initial dependency installation requires internet).
-3. After testing, run `build_windows.bat`. The script runs core and Qt smoke tests before packaging.
-4. Portable folder executable: `dist\SQLServerSimulator\SQLServerSimulator.exe`. Keep the complete folder, including `_internal`.
-5. With Inno Setup 6 installed, the build script also creates `installer_out\SQL_Server_Simulator_Setup_v0.6.1.exe`. The compiled Setup is NOT included in this source ZIP.
+## Previous v0.8.6 features: data records, SQL file import and query editor zoom
 
-## Database Diagram: no SQL needed
+- **Edit/delete records** from Data tabs or Edit Rows. Database FK and identity rules are enforced.
+- **Open SQL Script** using File → Open SQL Script… or `Ctrl+Shift+O`; UTF-8/UTF-16 text is shown for review, and execution needs confirmation. Partial execution is possible if later statements fail.
+- **Educational IntelliSense** suggests SQL keywords, table and view names, and columns; use `Ctrl+Space`, then Enter/Tab to accept.
+- **Query font zoom** via `+`, `−`, `100%`, `Ctrl+Mouse Wheel`, `Ctrl++`, `Ctrl+=`, `Ctrl+-` and `Ctrl+0`.
+- **Diagram zoom** supports matching shortcuts while the diagram tab is active.
+- Import demo: [`examples/SQL_Import_v0_8_4.sql`](examples/SQL_Import_v0_8_4.sql).
 
-- Click **New Table**, or right-click the diagram background > **New Table…**.
-- Double-click a table in Database Diagram, or right-click a table in the diagram / Object Explorer > **Design Table…** to edit its columns. Design supports data-type dropdowns (`NVARCHAR`, `DECIMAL`, etc.), PK, nullable, identity seed/increment, adding/deleting/renaming columns. Existing rows are retained if the transaction passes validations.
-- Click **Connect by Drag**, then drag **from the parent table to the child table**. The relationship wizard opens with source and target selected. Or use the normal Relationship Wizard / right-click menu.
-- Available types: **shared-PK 1:1**, **1:N** (parent PK copied to child FK), **N:M** (real junction table, composite or surrogate PK), and **SELF** (same-table hierarchical 1:N). N:M appears as two actual 1:N FKs through the bridge plus a dashed conceptual overlay.
-- Referential integrity is enforced for all non-NULL foreign keys. Invalid references fail; `Database > Check Referential Integrity…` verifies the whole project. The Query Editor cannot disable foreign-key checks.
-- If a redesign would violate relationships/constraints, it is rolled back. The visual designer intentionally refuses advanced custom defaults/triggers/indexes and risky referenced-PK changes rather than silently damaging data.
+The simulator uses SQLite and supports only a documented educational T-SQL subset. It cannot reliably execute arbitrary SQL Server exports.
 
-## Try the included sample
 
-Open `examples\Diagram_Training_v0_4.db`. It includes Department, Student, Profile, Course and Enrollment with 1:1, 1:N, N:M and Student.MentorID self-reference plus valid sample records.
+**Designed and developed by Ali Sayyadi**
 
-## Other features
+An educational Windows desktop application for understanding table design, primary/foreign keys, referential integrity, and SQL database diagrams. Built with **Python 3.12**, **PySide6/Qt 6**, and **SQLite 3**.
 
-Dark/light themes; English by default, Persian selectable; SQL editor; data entry and grid viewer; identity seed/increment; PNG export; T-SQL `.sql` generation with table/data scope and requested SQL Server target version. A `.sql` script is NOT a native `.bak` backup. Compatibility across server versions has not been fully verified. SQLite differs from SQL Server in types and identity implementation.
+> **Independent educational tool.** It is not Microsoft SQL Server and is not affiliated with Microsoft. T-SQL support is a limited teaching subset, not full compatibility. This preview may contain bugs.
 
-## Tests
+## Key features
 
+- No-SQL database and table wizards; a SQL Server-style field designer with NVARCHAR/DECIMAL and IDENTITY seed/increment controls.
+- Mouse-driven 1:1, 1:N, N:M (junction table), and self-referencing links with real foreign-key constraints.
+- Interactive diagram with link selection, relationship deletion, field-to-field linking, and drag-to-connect.
+- Auto Layout that prioritizes high-degree tables, scrollable/expandable canvas, middle-mouse panning, Ctrl+wheel zoom.
+- Right-click Drop Table / Drop Column actions with confirmation and guarded migrations; hidden diagram cards never delete tables.
+- Resizable, floating, closable Object Explorer / Properties / Query Results docks, draggable toolbar, Reset Window Layout command.
+- Theme-aware native icons; English and Persian UI; dark and light modes.
+- T-SQL teaching commands: `CREATE DATABASE`, `USE`, standalone `GO`, a small `CREATE TABLE` subset with IDENTITY; `CREATE USER`, `GRANT`, and `DENY` are **metadata-only demonstrations, NOT enforced security**.
+- Generate educational SQL Server scripts. A script export is **not** a real binary SQL Server `.bak` backup.
+
+## Run on Windows
+
+Extract the ZIP and launch `run_windows.bat` (requires Python 3.12). To package the desktop app, run `build_windows.bat` (PyInstaller). Install Inno Setup 6 to generate the graphical installer. Neither EXE nor Setup is precompiled in this source package.
+
+## Example
+
+Run [`examples/TSQL_Teaching_v0_7.sql`](examples/TSQL_Teaching_v0_7.sql) from the SQL editor. `CREATE DATABASE Training; GO; USE Training` creates/opens a local SQLite-backed educational project. Unsupported SQL Server server/security commands fail explicitly. Permission catalog records do not authenticate users or enforce access restrictions.
+
+## Validation
+
+```shell
+python -m unittest discover -s tests -v
 ```
-.venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py" -v
-```
 
-Qt UI tests require PySide6 and are executed on the target Windows machine before packaging.
+The Windows builder runs engine and Qt regression tests before packaging. Source tests on systems without PySide6 skip the graphical checks; those UI behaviors must be validated on Windows.
+
+**Bug reports:** [Ali.sayyadi200@gmail.com](mailto:Ali.sayyadi200@gmail.com)
+
+[Persian README](README.md) | [Detailed Persian guide](README_FA.md)
+
+
+Cross-platform build: use run_unix.sh for macOS/Linux source runs, build_macos.sh and build_linux.sh for native artifacts, or the GitHub Actions multi-platform workflow. Windows continues to use its .bat scripts. Python/PySide6/SQLite source is shared; platform-specific binaries are built separately.
+
+## Diagram zoom controls (v0.8.3)
+
+**Zoom In (+)** and **Zoom Out (−)** are now available in Database Diagram. They remain operational after **Auto Layout** fits very large diagrams to a scale below the former 20% limit. **Fit Diagram**, **100%**, and **Ctrl + mouse wheel** continue to work. The current zoom percentage is displayed in the toolbar.
+
+
+## Educational T-SQL modules (v0.8.3)
+
+- `CREATE VIEW dbo.Name AS SELECT ...` creates a **real SQLite view** that can be queried with `SELECT`.
+- `CREATE PROC` or `CREATE PROCEDURE` stores a limited parameterized procedure. `EXEC` / `EXECUTE` runs its `SELECT`, `INSERT`, `UPDATE`, or `DELETE` statements transactionally.
+- `CREATE FUNCTION` registers a persisted scalar `RETURN` expression, callable with `SELECT dbo.FunctionName(...)`.
+- `CREATE OR ALTER` and `DROP VIEW/PROC/FUNCTION` are supported for these limited objects.
+- Separate module definitions with a standalone `GO`. Example: [`examples/TSQL_Modules_v0_8_3.sql`](examples/TSQL_Modules_v0_8_3.sql).
+
+**Limitations:** This is an educational SQLite translation, not SQL Server stored procedure or UDF execution. No IF/WHILE, cursors, TRY/CATCH, output parameters, dynamic SQL, table-valued functions, or complex procedural bodies. Unsupported commands fail explicitly.
+
+## What's new in v0.8.7
+
+- True many-to-many junction with either a composite PK (both FKs) or a surrogate IDENTITY PK plus a UNIQUE pair constraint.
+- Optional 1:N child composite PK, with safety checks preventing a composite PK combined with an existing IDENTITY.
+- Generate Scripts Wizard now offers Save to `.sql` or Open in Query Editor without execution.
+- In-place table-cell editing via double-click/F2. IDENTITY cells remain read-only. Type and PK/FK/UNIQUE constraints are checked on every update.
+- Compact, responsive welcome card; bilingual Gmail and mailto bug-report drafts.
+- Ctrl++ / Ctrl+= / Ctrl+- / Ctrl+0 keyboard zoom shortcuts, button zoom, and Ctrl+wheel zoom.
+- Improved Persian labels, confirmation buttons and human-readable error summaries. Raw technical messages remain available in Details.
+
+This is a teaching simulator backed by SQLite, not Microsoft SQL Server; T-SQL feature coverage remains limited.
+
+## v0.8.7 Release candidate
+
+- Validate FK parent values, required fields and common SQL data types before row insert/update, while keeping SQLite constraints authoritative.
+- Editable NEW row at the bottom of the table data tab, with Tab navigation and a Save New Row action (Ctrl+Enter).
+- Existing record cells remain editable in place; database-generated IDENTITY values remain read-only.
+- **Software testing & quality assurance:** Mahan Pakravan-Nasab (ماهان پاکروان‌نسب).
+
+The project is a teaching simulator, not the SQL Server engine. Cross-platform GUI testing is required before publishing a stable release.

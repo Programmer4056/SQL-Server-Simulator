@@ -1,0 +1,114 @@
+name: Build SQL Server Simulator for Windows, macOS and Linux
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'assets/**'
+      - 'requirements.txt'
+      - 'run_unix.sh'
+      - 'build_linux.sh'
+      - 'build_macos.sh'
+      - 'build_windows.bat'
+      - 'build_windows_offline.bat'
+      - 'installer.iss'
+      - 'linux/**'
+      - '.github/workflows/cross-platform-build.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    name: Windows x64
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt 'pyinstaller>=6.8,<8'
+      - name: Test Qt and database backend
+        shell: pwsh
+        run: |
+          $env:QT_QPA_PLATFORM = 'offscreen'
+          python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Build Windows EXE
+        shell: cmd
+        run: >
+          python -m PyInstaller --noconfirm --clean --windowed --onedir
+          --name SQLServerSimulator --exclude-module tkinter
+          --icon "%CD%\assets\app.ico" --add-data "%CD%\assets;assets"
+          --distpath dist --workpath build --specpath build src\main.py
+      - name: Build fully offline single-file Windows EXE
+        shell: cmd
+        run: >
+          python -m PyInstaller --noconfirm --clean --windowed --onefile --noupx
+          --name SQLServerSimulator_Offline_v0.8.9 --exclude-module tkinter
+          --icon "%CD%\assets\app.ico" --add-data "%CD%\assets;assets"
+          --distpath dist_offline --workpath build_offline --specpath build_offline src\main.py
+      - name: Build Windows Setup when Inno Setup exists
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (Test-Path $iscc) { & $iscc installer.iss } else { Write-Warning 'Inno Setup 6 is not present; standalone EXE will still be uploaded.' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SQLServerSimulator-v0.8.9-Windows-x64
+          if-no-files-found: error
+          path: |
+            dist/SQLServerSimulator/**
+            installer_out/*.exe
+            dist_offline/*.exe
+
+  linux:
+    name: Linux x64
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Qt Linux libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1 libegl1 libxkbcommon-x11-0 libxcb-cursor0 libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xkb1
+      - name: Build and test
+        run: bash build_linux.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SQLServerSimulator-v0.8.9-Linux-x64
+          if-no-files-found: error
+          path: |
+            release/SQL_Server_Simulator_v0.8.9_Linux_*.tar.gz
+            release/SQL_Server_Simulator_v0.8.9_Linux_*.deb
+
+  macos:
+    name: macOS ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: Intel-x64
+            os: macos-15-intel
+          - arch: Apple-Silicon-arm64
+            os: macos-15
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build and test
+        run: bash build_macos.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SQLServerSimulator-v0.8.9-macOS-${{ matrix.arch }}
+          if-no-files-found: error
+          path: |
+            release/SQL_Server_Simulator_v0.8.9_macOS_*.zip
+            release/SQL_Server_Simulator_v0.8.9_macOS_*.dmg

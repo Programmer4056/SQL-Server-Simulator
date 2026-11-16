@@ -4,7 +4,7 @@ cd /d "%~dp0"
 chcp 65001 >nul
 
 echo ==================================================
-echo  SQL Server Simulator 0.6.1 - Windows Builder FIX
+echo  SQL Server Simulator 0.8.9 - Windows Builder FIX
 echo  Designed and developed by Ali Sayyadi
 echo ==================================================
 echo.
@@ -33,6 +33,10 @@ if not exist "%VENV_PY%" goto failed
 
 echo [1/3] Installing PySide6 Essentials and PyInstaller...
 "%VENV_PY%" -m pip install -r requirements.txt "pyinstaller>=6.8,<8"
+if errorlevel 1 goto failed
+
+echo [CHECK] Verifying Qt can load before running UI tests...
+"%VENV_PY%" -c "from PySide6.QtWidgets import QApplication"
 if errorlevel 1 goto failed
 
 echo [CHECK] Running core, identity, export and Qt regression tests...
@@ -68,7 +72,7 @@ if not exist "%ISCC%" (
 if errorlevel 1 goto failed
 
 echo.
-echo [SUCCESS] installer_out\SQL_Server_Simulator_Setup_v0.6.1.exe
+echo [SUCCESS] installer_out\SQL_Server_Simulator_Setup_v0.8.9.exe
 pause
 exit /b 0
 

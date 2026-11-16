@@ -1,40 +1,35 @@
-# Python virtual environments and build artifacts
-.venv/
-venv/
-.env/
+# Python / temporary files
 __pycache__/
 *.py[cod]
-*.pyo
 .pytest_cache/
-.mypy_cache/
-.ruff_cache/
-*.egg-info/
-
-# Windows application outputs
+.venv/
+.venv_*/
+venv/
+# Packaging outputs
 build/
 dist/
 installer_out/
 *.spec
-*.exe
-
-# Local database files (retain the intentional learning examples)
+# Local IDE and machine state
+.vscode/
+.idea/
+*.log
+*.tmp
+# User-generated databases and credentials
 *.db
 *.db-journal
 *.db-wal
 *.db-shm
-!examples/*.db
-
-# User configuration, logs and temp files
-*.log
-*.tmp
-*.bak
+*.sqlite
+*.sqlite3
 .env
 .env.*
-!.env.example
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
+# The checked-in sample databases are intentionally safe teaching fixtures.
+!examples/*.db
+# Single-file offline builds
+dist_offline/
+build_offline/
 
-# Archives generated for distribution
-*.zip
+build_fast/
+quality_test_log.txt
+test_results_v0_8_8.txt
